@@ -56,7 +56,7 @@ function GLBPolaroidCamera({ onCapture, isActive, webcamRef }: { onCapture: () =
         const texture = new THREE.CanvasTexture(canvas);
         texture.minFilter = THREE.LinearFilter;
         texture.magFilter = THREE.LinearFilter;
-        texture.flipY = true;
+        texture.flipY = false;
         setCanvasTexture(texture);
 
         console.log('Canvas texture created');

@@ -146,7 +146,7 @@ export default function Polaroid() {
         >
             {/* Hidden but functioning Webcam for photo capture */}
             {cameraActive && (
-                <div className="fixed top-4 left-1/2 transform -translate-x-1/2 w-[20vw] h-[15vw] max-w-32 max-h-24 rounded pointer-events-none z-50 border border-gray-300 rounded overflow-hidden">
+                <div className="opacity-0 fixed top-4 left-1/2 transform -translate-x-1/2 w-[20vw] h-[15vw] max-w-32 max-h-24 rounded pointer-events-none z-50 border border-gray-300 rounded overflow-hidden">
                     <Webcam
                         ref={webcamRef}
                         screenshotFormat="image/jpeg"
