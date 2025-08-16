@@ -41,18 +41,14 @@ function GLBPolaroidCamera({ onCapture, isActive }: { onCapture: () => void; isA
       console.log('New model loaded:', scene);
       console.log('New model children:', scene.children);
 
-      // Keep original materials for realistic look
+      // Apply Lambert materials for softer, more diffuse lighting
       scene.traverse((child) => {
         if (child instanceof THREE.Mesh) {
-          // Keep the original material but ensure it's a standard material for better lighting
-          if (!(child.material instanceof THREE.MeshStandardMaterial)) {
-            child.material = new THREE.MeshStandardMaterial({
-              color: child.material.color || 0xffffff,
-              map: child.material.map || null,
-              roughness: 0.8,
-              metalness: 0.1,
-            });
-          }
+          // Use Lambert material for soft, diffuse lighting
+          child.material = new THREE.MeshLambertMaterial({
+            color: child.material.color || 0xffffff,
+            map: child.material.map || null,
+          });
         }
       });
 
@@ -81,12 +77,12 @@ function GLBPolaroidCamera({ onCapture, isActive }: { onCapture: () => void; isA
     if (event.buttons === 1) {
       const deltaX = Math.abs(event.clientX - dragStart.current.x);
       const deltaY = Math.abs(event.clientY - dragStart.current.y);
-      
+
       // If moved more than 5 pixels, consider it dragging
       if (deltaX > 5 || deltaY > 5) {
         isDragging.current = true;
       }
-      
+
       setRotation(prev => prev + event.movementX * 0.01);
     }
   };
@@ -159,20 +155,18 @@ export default function PolaroidCamera3D({ onCapture, isActive }: PolaroidCamera
           position={[0, 0, 15]}
           zoom={30}
         />
-        <ambientLight intensity={0.3} />
-        <directionalLight 
-          position={[15, 10, 10]} 
-          intensity={2.5}
-          castShadow={true}
+        <ambientLight intensity={0.1} />
+        <spotLight
+          position={[10, 15, 35]}
+          penumbra={1}
+          angle={0.3}
+          color="white"
+          castShadow
+          shadow-mapSize={[512, 512]}
+          intensity={1}
         />
-        <directionalLight 
-          position={[-5, -5, 5]} 
-          intensity={0.4}
-        />
-        <directionalLight 
-          position={[0, 15, -10]} 
-          intensity={0.8}
-        />
+        <directionalLight position={[0, 8, 25]} intensity={2} />
+        <directionalLight position={[0, -15, 25]} intensity={0.5} color="#ffeedd" />
 
 
         <Suspense fallback={<LoadingFallback />}>
