@@ -3,7 +3,7 @@
 import { useRef, useState, Suspense, useEffect } from 'react';
 import * as React from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
-import { OrthographicCamera, useGLTF, Edges } from '@react-three/drei';
+import { OrthographicCamera, useGLTF, Edges, Line } from '@react-three/drei';
 import * as THREE from 'three';
 
 interface PolaroidCamera3DProps {
@@ -33,11 +33,23 @@ function GLBPolaroidCamera({ onCapture, isActive }: { onCapture: () => void; isA
   // Load the GLB model with error handling
   const { scene, error } = useGLTF('/assets/polaroid/polaroid_onestep.glb');
 
-  // Calculate center only once when model loads
+  // Calculate center and add toon shading when model loads
   useEffect(() => {
     if (scene && !modelCenter) {
       console.log('New model loaded:', scene);
       console.log('New model children:', scene.children);
+      
+      // Apply clean toon shading for IKEA style
+      scene.traverse((child) => {
+        if (child instanceof THREE.Mesh) {
+          // Replace material with clean toon material
+          child.material = new THREE.MeshToonMaterial({
+            color: child.material.color || 0xffffff,
+            map: child.material.map || null,
+          });
+        }
+      });
+      
       const box = new THREE.Box3().setFromObject(scene);
       const center = box.getCenter(new THREE.Vector3());
       const size = box.getSize(new THREE.Vector3());
@@ -115,9 +127,12 @@ function GLBPolaroidCamera({ onCapture, isActive }: { onCapture: () => void; isA
 export default function PolaroidCamera3D({ onCapture, isActive }: PolaroidCamera3DProps) {
   return (
     <div className="w-[min(80vw,60vh)] h-[min(80vw,60vh)]"> {/* Responsive: 80% of viewport width or 60% of height, whichever is smaller */}
-      <Canvas
-        camera={{ position: [0, 0, 15], fov: 50 }} // Directly in front for perfect front view
-      >
+      <Canvas>
+        <OrthographicCamera
+          makeDefault
+          position={[0, 0, 15]}
+          zoom={50}
+        />
         <ambientLight intensity={1.2} />
         <directionalLight position={[10, 10, 5]} intensity={1.5} />
         <directionalLight position={[-10, -10, -5]} intensity={0.8} />
