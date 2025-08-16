@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect } from 'react';
 import Webcam from 'react-webcam';
 import PolaroidCamera3D from '../../components/PolaroidCamera3D';
+import { X } from 'lucide-react';
 
 interface PolaroidPhoto {
     id: string;
@@ -140,9 +141,9 @@ export default function Polaroid() {
                             />
                             <button
                                 onClick={() => removePhoto(photo.id)}
-                                className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity text-xs"
+                                className="absolute -top-6 -right-6 bg-zinc-200 text-white rounded-full w-6 h-6 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity text-xs"
                             >
-                                ×
+                                <X className="w-4 h-4 text-zinc-600 hover:text-zinc-500" strokeWidth={2} />
                             </button>
                         </div>
                     </div>
