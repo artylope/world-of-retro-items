@@ -42,7 +42,7 @@ export default function Polaroid() {
 
         // Exclusion zones
         const polaroidSize = Math.min(window.innerWidth * 0.12, 200);
-        
+
         // Red zone (center camera area) - 38vw × 50vh, centered
         const redZoneWidth = window.innerWidth * 0.38;
         const redZoneHeight = window.innerHeight * 0.50;
@@ -106,7 +106,7 @@ export default function Polaroid() {
             )}
 
             {/* Polaroid exclusion zone - red boundary */}
-            <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-5 bg-red-500 opacity-20 pointer-events-none w-[38vw] h-[50vh] rounded-lg">
+            <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-5 bg-red-500 opacity-0 pointer-events-none w-[38vw] h-[50vh] rounded-lg">
             </div>
 
             {/* 3D Polaroid Camera */}
