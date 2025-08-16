@@ -22,20 +22,23 @@ export default function Polaroid() {
         const imageUrl = webcamRef.current.getScreenshot();
         if (!imageUrl) return;
 
-        // Random position calculation (avoiding center area)
-        const centerBuffer = 200;
-        const maxX = window.innerWidth - 200;
-        const maxY = window.innerHeight - 240;
+        // Responsive positioning using viewport proportions
+        const centerBufferVW = window.innerWidth * 0.25; // 25% of viewport width
+        const centerBufferVH = window.innerHeight * 0.25; // 25% of viewport height
+        const polaroidSize = Math.min(window.innerWidth * 0.12, 200); // Responsive polaroid size
+
+        const maxX = window.innerWidth - polaroidSize;
+        const maxY = window.innerHeight - polaroidSize;
 
         let x, y;
         do {
             x = Math.random() * maxX;
             y = Math.random() * maxY;
         } while (
-            x > window.innerWidth / 2 - centerBuffer &&
-            x < window.innerWidth / 2 + centerBuffer &&
-            y > window.innerHeight / 2 - centerBuffer &&
-            y < window.innerHeight / 2 + centerBuffer
+            x > window.innerWidth / 2 - centerBufferVW &&
+            x < window.innerWidth / 2 + centerBufferVW &&
+            y > window.innerHeight / 2 - centerBufferVH &&
+            y < window.innerHeight / 2 + centerBufferVH
         );
 
         const newPhoto: PolaroidPhoto = {
@@ -56,7 +59,7 @@ export default function Polaroid() {
         <div className="relative min-h-screen bg-gradient-to-br from-blue-100 to-purple-100 overflow-hidden">
             {/* Hidden but functioning Webcam for photo capture */}
             {cameraActive && (
-                <div className="fixed bottom-4 right-4 w-32 h-24 opacity-30 pointer-events-none z-50 border border-gray-300 rounded overflow-hidden">
+                <div className="fixed bottom-4 right-4 w-[20vw] h-[15vw] max-w-32 max-h-24 opacity-30 pointer-events-none z-50 border border-gray-300 rounded overflow-hidden">
                     <Webcam
                         ref={webcamRef}
                         screenshotFormat="image/jpeg"
@@ -70,6 +73,10 @@ export default function Polaroid() {
                 </div>
             )}
 
+            {/* Polaroid exclusion zone - red boundary */}
+            <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-5 bg-red-500 opacity-20 pointer-events-none w-[vw] h-[50vh] rounded-lg">
+            </div>
+
             {/* 3D Polaroid Camera */}
             <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-10">
 
@@ -82,14 +89,14 @@ export default function Polaroid() {
                     {!cameraActive ? (
                         <button
                             onClick={() => setCameraActive(true)}
-                            className="w-full bg-red-500 hover:bg-red-600 text-white font-bold py-3 px-6 rounded-full transition-colors shadow-lg"
+                            className="w-full bg-red-500 hover:bg-red-600 text-white font-bold py-2 sm:py-3 px-4 sm:px-6 text-sm sm:text-base rounded-full transition-colors shadow-lg"
                         >
                             Start Camera
                         </button>
                     ) : (
                         <button
                             onClick={() => setCameraActive(false)}
-                            className="w-full bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-6 rounded-full transition-colors shadow-lg"
+                            className="w-full bg-gray-500 hover:bg-gray-600 text-white font-bold py-1 sm:py-2 px-4 sm:px-6 text-sm sm:text-base rounded-full transition-colors shadow-lg"
                         >
                             Stop Camera
                         </button>
@@ -114,7 +121,7 @@ export default function Polaroid() {
                             <img
                                 src={photo.imageUrl}
                                 alt="Polaroid"
-                                className="w-40 h-30 object-cover"
+                                className="w-[min(10vw,160px)] h-[min(7.5vw,120px)] object-cover"
                             />
                             <button
                                 onClick={() => removePhoto(photo.id)}

@@ -55,14 +55,14 @@ function GLBPolaroidCamera({ onCapture, isActive }: { onCapture: () => void; isA
 
   const handleClick = (event: any) => {
     event.stopPropagation(); // Prevent event bubbling
-    
+
     // Debounce clicks - only allow one click per 500ms
     const now = Date.now();
     if (now - lastClickTime.current < 500) {
       return;
     }
     lastClickTime.current = now;
-    
+
     if (isActive) {
       console.log('Camera clicked - taking photo');
       onCapture();
@@ -114,20 +114,20 @@ function GLBPolaroidCamera({ onCapture, isActive }: { onCapture: () => void; isA
 
 export default function PolaroidCamera3D({ onCapture, isActive }: PolaroidCamera3DProps) {
   return (
-    <div className="w-[500px] h-[500px]"> {/* Larger container for bigger camera */}
+    <div className="w-[min(80vw,60vh)] h-[min(80vw,60vh)]"> {/* Responsive: 80% of viewport width or 60% of height, whichever is smaller */}
       <Canvas
         camera={{ position: [0, 0, 15], fov: 50 }} // Directly in front for perfect front view
       >
-        <ambientLight intensity={0.6} />
-        <directionalLight position={[10, 10, 5]} intensity={0.8} />
-        <directionalLight position={[-10, -10, -5]} intensity={0.3} />
+        <ambientLight intensity={1.2} />
+        <directionalLight position={[10, 10, 5]} intensity={1.5} />
+        <directionalLight position={[-10, -10, -5]} intensity={0.8} />
+        <directionalLight position={[0, 10, 10]} intensity={0.6} />
 
         <Suspense fallback={<LoadingFallback />}>
           <GLBPolaroidCamera onCapture={onCapture} isActive={isActive} />
         </Suspense>
       </Canvas>
-
-      <div className="text-center mt-4 text-sm text-gray-600">
+      <div className="text-center text-xs sm:text-sm text-gray-600 px-2 -translate-y-10">
         {isActive ? 'Click camera to take photo' : 'Drag to rotate • Click "Start Camera" first'}
       </div>
     </div>
