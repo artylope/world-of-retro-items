@@ -154,9 +154,7 @@ export default function PolaroidCamera3D({ onCapture, isActive }: PolaroidCamera
           <GLBPolaroidCamera onCapture={onCapture} isActive={isActive} />
         </Suspense>
       </Canvas>
-      <div className="text-center text-xs sm:text-sm text-gray-600 px-2 -translate-y-10">
-        'Click camera or press SPACE to take photo • Drag to rotate'
-      </div>
+
     </div>
   );
 }

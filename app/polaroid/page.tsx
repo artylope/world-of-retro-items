@@ -88,7 +88,7 @@ export default function Polaroid() {
     };
 
     return (
-        <div className="relative min-h-screen bg-gradient-to-br from-blue-100 to-purple-100 overflow-hidden">
+        <div className="relative min-h-screen bg-sky-500 overflow-hidden">
             {/* Hidden but functioning Webcam for photo capture */}
             {cameraActive && (
                 <div className="fixed top-4 left-1/2 transform -translate-x-1/2 w-[20vw] h-[15vw] max-w-32 max-h-24 rounded pointer-events-none z-50 border border-gray-300 rounded overflow-hidden">
@@ -98,8 +98,8 @@ export default function Polaroid() {
                         className="w-full h-full object-cover"
                         videoConstraints={{
                             facingMode: 'user',
-                            width: 640,
-                            height: 480
+                            width: 1280,
+                            height: 960
                         }}
                     />
                 </div>
@@ -116,10 +116,10 @@ export default function Polaroid() {
                     onCapture={capturePhoto}
                     isActive={cameraActive}
                 />
-
-
             </div>
-
+            <div className="fixed bottom-44 left-1/2 transform -translate-x-1/2 text-center font-medium text-sm md:text-base text-white px-2 -translate-y-10">
+                Click camera or press SPACE to take photo <br /> Drag to rotate
+            </div>
             {/* Scattered Polaroid Photos */}
             {photos.map((photo) => (
                 <div
@@ -131,12 +131,12 @@ export default function Polaroid() {
                         transform: `rotate(${Math.random() * 20 - 10}deg)`
                     }}
                 >
-                    <div className="bg-white p-3 pb-8 shadow-lg hover:shadow-xl transition-shadow">
+                    <div className="bg-white p-3 pb-8 shadow-xl rounded-xs hover:shadow-xl transition-shadow">
                         <div className="relative">
                             <img
                                 src={photo.imageUrl}
                                 alt="Polaroid"
-                                className="w-[min(10vw,160px)] h-[min(7.5vw,120px)] object-cover"
+                                className="w-[min(12vw,200px)] h-[min(10vw,180px)] object-cover rounded-xs"
                             />
                             <button
                                 onClick={() => removePhoto(photo.id)}
