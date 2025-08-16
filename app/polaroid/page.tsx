@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import Webcam from 'react-webcam';
 import PolaroidCamera3D from '../../components/PolaroidCamera3D';
 
@@ -16,6 +16,24 @@ export default function Polaroid() {
     const webcamRef = useRef<Webcam>(null);
     const [cameraActive, setCameraActive] = useState(false);
 
+    // Auto-start camera on component mount
+    useEffect(() => {
+        setCameraActive(true);
+    }, []);
+
+    // Handle spacebar to take photos
+    useEffect(() => {
+        const handleKeyPress = (event: KeyboardEvent) => {
+            if (event.code === 'Space' && cameraActive) {
+                event.preventDefault();
+                capturePhoto();
+            }
+        };
+
+        window.addEventListener('keydown', handleKeyPress);
+        return () => window.removeEventListener('keydown', handleKeyPress);
+    }, [cameraActive]);
+
     const capturePhoto = () => {
         if (!webcamRef.current) return;
 
@@ -23,22 +41,38 @@ export default function Polaroid() {
         if (!imageUrl) return;
 
         // Responsive positioning using viewport proportions
-        const centerBufferVW = window.innerWidth * 0.25; // 25% of viewport width
-        const centerBufferVH = window.innerHeight * 0.25; // 25% of viewport height
+        const centerExclusionWidth = window.innerWidth * 0.38; // Center camera zone: 38vw
+        const centerExclusionHeight = window.innerHeight * 0.50; // Center camera zone: 50vh
         const polaroidSize = Math.min(window.innerWidth * 0.12, 200); // Responsive polaroid size
 
+        // Top preview exclusion zone
+        const previewWidth = window.innerWidth * 0.20; // 20vw
+        const previewHeight = window.innerHeight * 0.15; // 15vw converted to vh roughly
+        
         const maxX = window.innerWidth - polaroidSize;
         const maxY = window.innerHeight - polaroidSize;
+
+        // Center camera exclusion boundaries
+        const centerLeft = (window.innerWidth - centerExclusionWidth) / 2 - polaroidSize * 0.2;
+        const centerRight = (window.innerWidth + centerExclusionWidth) / 2 + polaroidSize * 0.2;
+        const centerTop = (window.innerHeight - centerExclusionHeight) / 2 - polaroidSize * 0.2;
+        const centerBottom = (window.innerHeight + centerExclusionHeight) / 2 + polaroidSize * 0.2;
+
+        // Top preview exclusion boundaries  
+        const previewLeft = (window.innerWidth - previewWidth) / 2 - polaroidSize * 0.2;
+        const previewRight = (window.innerWidth + previewWidth) / 2 + polaroidSize * 0.2;
+        const previewTop = 16 - polaroidSize * 0.2; // top-4 = 16px
+        const previewBottom = 16 + previewHeight + polaroidSize * 0.2;
 
         let x, y;
         do {
             x = Math.random() * maxX;
             y = Math.random() * maxY;
         } while (
-            x > window.innerWidth / 2 - centerBufferVW &&
-            x < window.innerWidth / 2 + centerBufferVW &&
-            y > window.innerHeight / 2 - centerBufferVH &&
-            y < window.innerHeight / 2 + centerBufferVH
+            // Avoid center camera area
+            (x > centerLeft && x < centerRight && y > centerTop && y < centerBottom) ||
+            // Avoid top preview area
+            (x > previewLeft && x < previewRight && y > previewTop && y < previewBottom)
         );
 
         const newPhoto: PolaroidPhoto = {
@@ -59,7 +93,7 @@ export default function Polaroid() {
         <div className="relative min-h-screen bg-gradient-to-br from-blue-100 to-purple-100 overflow-hidden">
             {/* Hidden but functioning Webcam for photo capture */}
             {cameraActive && (
-                <div className="fixed bottom-4 right-4 w-[20vw] h-[15vw] max-w-32 max-h-24 opacity-30 pointer-events-none z-50 border border-gray-300 rounded overflow-hidden">
+                <div className="fixed top-4 left-1/2 transform -translate-x-1/2 w-[20vw] h-[15vw] max-w-32 max-h-24 rounded pointer-events-none z-50 border border-gray-300 rounded overflow-hidden">
                     <Webcam
                         ref={webcamRef}
                         screenshotFormat="image/jpeg"
@@ -74,7 +108,7 @@ export default function Polaroid() {
             )}
 
             {/* Polaroid exclusion zone - red boundary */}
-            <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-5 bg-red-500 opacity-20 pointer-events-none w-[vw] h-[50vh] rounded-lg">
+            <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-5 bg-red-500 opacity-20 pointer-events-none w-[38vw] h-[50vh] rounded-lg">
             </div>
 
             {/* 3D Polaroid Camera */}
@@ -85,23 +119,6 @@ export default function Polaroid() {
                     isActive={cameraActive}
                 />
 
-                <div className="space-y-3 mt-6">
-                    {!cameraActive ? (
-                        <button
-                            onClick={() => setCameraActive(true)}
-                            className="w-full bg-red-500 hover:bg-red-600 text-white font-bold py-2 sm:py-3 px-4 sm:px-6 text-sm sm:text-base rounded-full transition-colors shadow-lg"
-                        >
-                            Start Camera
-                        </button>
-                    ) : (
-                        <button
-                            onClick={() => setCameraActive(false)}
-                            className="w-full bg-gray-500 hover:bg-gray-600 text-white font-bold py-1 sm:py-2 px-4 sm:px-6 text-sm sm:text-base rounded-full transition-colors shadow-lg"
-                        >
-                            Stop Camera
-                        </button>
-                    )}
-                </div>
 
             </div>
 
