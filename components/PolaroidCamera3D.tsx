@@ -38,18 +38,26 @@ function GLBPolaroidCamera({ onCapture, isActive }: { onCapture: () => void; isA
     if (scene && !modelCenter) {
       console.log('New model loaded:', scene);
       console.log('New model children:', scene.children);
-      
-      // Apply clean toon shading for IKEA style
+
+      // Apply clean toon shading with gradient map for IKEA style
       scene.traverse((child) => {
         if (child instanceof THREE.Mesh) {
-          // Replace material with clean toon material
+          // Create a harsh 3-tone gradient map
+          const gradientMap = new THREE.DataTexture(
+            new Uint8Array([0, 60, 180, 255]), // More contrast: very dark, dark, light, very light
+            4, 1, THREE.RedFormat
+          );
+          gradientMap.needsUpdate = true;
+
+          // Replace material with toon material using gradient map
           child.material = new THREE.MeshToonMaterial({
             color: child.material.color || 0xffffff,
             map: child.material.map || null,
+            gradientMap: gradientMap,
           });
         }
       });
-      
+
       const box = new THREE.Box3().setFromObject(scene);
       const center = box.getCenter(new THREE.Vector3());
       const size = box.getSize(new THREE.Vector3());
@@ -114,7 +122,7 @@ function GLBPolaroidCamera({ onCapture, isActive }: { onCapture: () => void; isA
       ref={groupRef}
       onPointerMove={handlePointerMove}
       onClick={handleClick}
-      scale={[0.15, 0.15, 0.15]} // 5x bigger (was 0.05, now 0.25)
+      scale={[0.25, 0.25, 0.25]} // Bigger scale for larger canvas
     >
       {/* This group rotates around origin, with model offset to center it */}
       <group position={[-modelCenter.x, -modelCenter.y, -modelCenter.z]}>
@@ -126,17 +134,21 @@ function GLBPolaroidCamera({ onCapture, isActive }: { onCapture: () => void; isA
 
 export default function PolaroidCamera3D({ onCapture, isActive }: PolaroidCamera3DProps) {
   return (
-    <div className="w-[min(80vw,60vh)] h-[min(80vw,60vh)]"> {/* Responsive: 80% of viewport width or 60% of height, whichever is smaller */}
-      <Canvas>
+    <div className="w-[min(90vw,80vh)] h-[min(90vw,80vh)]"> {/* Responsive: 90% of viewport width or 80% of height, whichever is smaller */}
+      <Canvas className='w-full h-full'>
         <OrthographicCamera
           makeDefault
           position={[0, 0, 15]}
-          zoom={50}
+          zoom={30}
         />
-        <ambientLight intensity={1.2} />
-        <directionalLight position={[10, 10, 5]} intensity={1.5} />
-        <directionalLight position={[-10, -10, -5]} intensity={0.8} />
-        <directionalLight position={[0, 10, 10]} intensity={0.6} />
+        <ambientLight intensity={2} />
+        <directionalLight position={[10, 6, 20]}
+          intensity={1} />
+        <directionalLight position={[0, 20, 0]}
+          intensity={1} />
+        {/* <directionalLight position={[-6, 0, 10]}
+          intensity={0.1} /> */}
+
 
         <Suspense fallback={<LoadingFallback />}>
           <GLBPolaroidCamera onCapture={onCapture} isActive={isActive} />
