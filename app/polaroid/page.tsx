@@ -10,12 +10,14 @@ interface PolaroidPhoto {
     imageUrl: string;
     x: number;
     y: number;
+    rotation: number;
 }
 
 export default function Polaroid() {
     const [photos, setPhotos] = useState<PolaroidPhoto[]>([]);
     const webcamRef = useRef<Webcam>(null);
     const [cameraActive, setCameraActive] = useState(false);
+    const [draggedPhoto, setDraggedPhoto] = useState<string | null>(null);
 
     // Auto-start camera on component mount
     useEffect(() => {
@@ -78,7 +80,8 @@ export default function Polaroid() {
             id: Date.now().toString(),
             imageUrl,
             x,
-            y
+            y,
+            rotation: Math.random() * 20 - 10 // Random rotation between -10 and 10 degrees
         };
 
         setPhotos(prev => [...prev, newPhoto]);
@@ -88,8 +91,59 @@ export default function Polaroid() {
         setPhotos(prev => prev.filter(photo => photo.id !== id));
     };
 
+    // Drag and drop handlers
+    const handleDragStart = (e: React.DragEvent, photoId: string) => {
+        setDraggedPhoto(photoId);
+        e.dataTransfer.effectAllowed = 'move';
+        
+        // Create a custom drag image (optional)
+        const dragImage = e.currentTarget.cloneNode(true) as HTMLElement;
+        dragImage.style.transform = 'rotate(0deg)';
+        dragImage.style.opacity = '0.8';
+        e.dataTransfer.setDragImage(dragImage, 75, 75);
+    };
+
+    const handleDragOver = (e: React.DragEvent) => {
+        e.preventDefault();
+        e.dataTransfer.dropEffect = 'move';
+    };
+
+    const handleDrop = (e: React.DragEvent) => {
+        e.preventDefault();
+        
+        if (!draggedPhoto) return;
+
+        const rect = e.currentTarget.getBoundingClientRect();
+        const x = e.clientX - rect.left - 75; // Offset for center of photo
+        const y = e.clientY - rect.top - 75;
+
+        // Ensure photo stays within bounds
+        const polaroidSize = Math.min(window.innerWidth * 0.12, 200);
+        const maxX = window.innerWidth - polaroidSize;
+        const maxY = window.innerHeight - polaroidSize;
+
+        const clampedX = Math.max(0, Math.min(x, maxX));
+        const clampedY = Math.max(0, Math.min(y, maxY));
+
+        setPhotos(prev => prev.map(photo => 
+            photo.id === draggedPhoto 
+                ? { ...photo, x: clampedX, y: clampedY }
+                : photo
+        ));
+
+        setDraggedPhoto(null);
+    };
+
+    const handleDragEnd = () => {
+        setDraggedPhoto(null);
+    };
+
     return (
-        <div className="relative min-h-screen bg-sky-500 overflow-hidden">
+        <div 
+            className="relative min-h-screen bg-sky-500 overflow-hidden"
+            onDragOver={handleDragOver}
+            onDrop={handleDrop}
+        >
             {/* Hidden but functioning Webcam for photo capture */}
             {cameraActive && (
                 <div className="fixed top-4 left-1/2 transform -translate-x-1/2 w-[20vw] h-[15vw] max-w-32 max-h-24 rounded pointer-events-none z-50 border border-gray-300 rounded overflow-hidden">
@@ -125,11 +179,17 @@ export default function Polaroid() {
             {photos.map((photo) => (
                 <div
                     key={photo.id}
-                    className="absolute transform cursor-pointer group"
+                    draggable
+                    onDragStart={(e) => handleDragStart(e, photo.id)}
+                    onDragEnd={handleDragEnd}
+                    className={`absolute transform cursor-move group transition-opacity ${
+                        draggedPhoto === photo.id ? 'opacity-50' : 'opacity-100'
+                    }`}
                     style={{
                         left: `${photo.x}px`,
                         top: `${photo.y}px`,
-                        transform: `rotate(${Math.random() * 20 - 10}deg)`
+                        transform: `rotate(${photo.rotation}deg)`,
+                        zIndex: draggedPhoto === photo.id ? 1000 : 'auto'
                     }}
                 >
                     <div className="bg-white p-3 pb-8 shadow-xl rounded-xs hover:shadow-xl transition-shadow">

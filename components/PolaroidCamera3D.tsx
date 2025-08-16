@@ -29,9 +29,11 @@ function GLBPolaroidCamera({ onCapture, isActive }: { onCapture: () => void; isA
   const [rotation, setRotation] = useState(0);
   const [modelCenter, setModelCenter] = useState<THREE.Vector3 | null>(null);
   const lastClickTime = useRef(0);
+  const isDragging = useRef(false);
+  const dragStart = useRef({ x: 0, y: 0 });
 
-  // Load the GLB model with error handling
-  const { scene, error } = useGLTF('/assets/polaroid/polaroid_onestep.glb');
+  // Load the GLB model
+  const { scene } = useGLTF('/assets/polaroid/polaroid_onestep.glb');
 
   // Calculate center and add toon shading when model loads
   useEffect(() => {
@@ -39,22 +41,18 @@ function GLBPolaroidCamera({ onCapture, isActive }: { onCapture: () => void; isA
       console.log('New model loaded:', scene);
       console.log('New model children:', scene.children);
 
-      // Apply clean toon shading with gradient map for IKEA style
+      // Keep original materials for realistic look
       scene.traverse((child) => {
         if (child instanceof THREE.Mesh) {
-          // Create a harsh 3-tone gradient map
-          const gradientMap = new THREE.DataTexture(
-            new Uint8Array([0, 60, 180, 255]), // More contrast: very dark, dark, light, very light
-            4, 1, THREE.RedFormat
-          );
-          gradientMap.needsUpdate = true;
-
-          // Replace material with toon material using gradient map
-          child.material = new THREE.MeshToonMaterial({
-            color: child.material.color || 0xffffff,
-            map: child.material.map || null,
-            gradientMap: gradientMap,
-          });
+          // Keep the original material but ensure it's a standard material for better lighting
+          if (!(child.material instanceof THREE.MeshStandardMaterial)) {
+            child.material = new THREE.MeshStandardMaterial({
+              color: child.material.color || 0xffffff,
+              map: child.material.map || null,
+              roughness: 0.8,
+              metalness: 0.1,
+            });
+          }
         }
       });
 
@@ -73,8 +71,33 @@ function GLBPolaroidCamera({ onCapture, isActive }: { onCapture: () => void; isA
     }
   });
 
+  const handlePointerDown = (event: any) => {
+    event.stopPropagation();
+    isDragging.current = false;
+    dragStart.current = { x: event.clientX, y: event.clientY };
+  };
+
+  const handlePointerMove = (event: any) => {
+    if (event.buttons === 1) {
+      const deltaX = Math.abs(event.clientX - dragStart.current.x);
+      const deltaY = Math.abs(event.clientY - dragStart.current.y);
+      
+      // If moved more than 5 pixels, consider it dragging
+      if (deltaX > 5 || deltaY > 5) {
+        isDragging.current = true;
+      }
+      
+      setRotation(prev => prev + event.movementX * 0.01);
+    }
+  };
+
   const handleClick = (event: any) => {
-    event.stopPropagation(); // Prevent event bubbling
+    event.stopPropagation();
+
+    // Don't take photo if user was dragging
+    if (isDragging.current) {
+      return;
+    }
 
     // Debounce clicks - only allow one click per 500ms
     const now = Date.now();
@@ -89,14 +112,8 @@ function GLBPolaroidCamera({ onCapture, isActive }: { onCapture: () => void; isA
     }
   };
 
-  const handlePointerMove = (event: any) => {
-    if (event.buttons === 1) {
-      setRotation(prev => prev + event.movementX * 0.01);
-    }
-  };
-
   // If model failed to load or has no children, show fallback
-  if (error || !scene || !scene.children.length) {
+  if (!scene || !scene.children.length) {
     console.log('Model failed to load or is empty, showing fallback');
     return (
       <group ref={groupRef}>
@@ -120,6 +137,7 @@ function GLBPolaroidCamera({ onCapture, isActive }: { onCapture: () => void; isA
   return (
     <group
       ref={groupRef}
+      onPointerDown={handlePointerDown}
       onPointerMove={handlePointerMove}
       onClick={handleClick}
       scale={[0.25, 0.25, 0.25]} // Bigger scale for larger canvas
@@ -141,13 +159,20 @@ export default function PolaroidCamera3D({ onCapture, isActive }: PolaroidCamera
           position={[0, 0, 15]}
           zoom={30}
         />
-        <ambientLight intensity={2} />
-        <directionalLight position={[10, 6, 20]}
-          intensity={1} />
-        <directionalLight position={[0, 20, 0]}
-          intensity={1} />
-        {/* <directionalLight position={[-6, 0, 10]}
-          intensity={0.1} /> */}
+        <ambientLight intensity={0.3} />
+        <directionalLight 
+          position={[15, 10, 10]} 
+          intensity={2.5}
+          castShadow={true}
+        />
+        <directionalLight 
+          position={[-5, -5, 5]} 
+          intensity={0.4}
+        />
+        <directionalLight 
+          position={[0, 15, -10]} 
+          intensity={0.8}
+        />
 
 
         <Suspense fallback={<LoadingFallback />}>
