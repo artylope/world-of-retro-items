@@ -40,39 +40,37 @@ export default function Polaroid() {
         const imageUrl = webcamRef.current.getScreenshot();
         if (!imageUrl) return;
 
-        // Responsive positioning using viewport proportions
-        const centerExclusionWidth = window.innerWidth * 0.38; // Center camera zone: 38vw
-        const centerExclusionHeight = window.innerHeight * 0.50; // Center camera zone: 50vh
-        const polaroidSize = Math.min(window.innerWidth * 0.12, 200); // Responsive polaroid size
-
-        // Top preview exclusion zone
-        const previewWidth = window.innerWidth * 0.20; // 20vw
-        const previewHeight = window.innerHeight * 0.15; // 15vw converted to vh roughly
+        // Exclusion zones
+        const polaroidSize = Math.min(window.innerWidth * 0.12, 200);
         
+        // Red zone (center camera area) - 38vw × 50vh, centered
+        const redZoneWidth = window.innerWidth * 0.38;
+        const redZoneHeight = window.innerHeight * 0.50;
+        const redZoneLeft = (window.innerWidth - redZoneWidth) / 2;
+        const redZoneRight = redZoneLeft + redZoneWidth;
+        const redZoneTop = (window.innerHeight - redZoneHeight) / 2;
+        const redZoneBottom = redZoneTop + redZoneHeight;
+
+        // Preview zone (top area) - 20vw × 15vh, top center
+        const previewWidth = window.innerWidth * 0.20;
+        const previewHeight = window.innerHeight * 0.15;
+        const previewLeft = (window.innerWidth - previewWidth) / 2;
+        const previewRight = previewLeft + previewWidth;
+        const previewTop = 16; // top-4 = 16px
+        const previewBottom = previewTop + previewHeight;
+
         const maxX = window.innerWidth - polaroidSize;
         const maxY = window.innerHeight - polaroidSize;
-
-        // Center camera exclusion boundaries
-        const centerLeft = (window.innerWidth - centerExclusionWidth) / 2 - polaroidSize * 0.2;
-        const centerRight = (window.innerWidth + centerExclusionWidth) / 2 + polaroidSize * 0.2;
-        const centerTop = (window.innerHeight - centerExclusionHeight) / 2 - polaroidSize * 0.2;
-        const centerBottom = (window.innerHeight + centerExclusionHeight) / 2 + polaroidSize * 0.2;
-
-        // Top preview exclusion boundaries  
-        const previewLeft = (window.innerWidth - previewWidth) / 2 - polaroidSize * 0.2;
-        const previewRight = (window.innerWidth + previewWidth) / 2 + polaroidSize * 0.2;
-        const previewTop = 16 - polaroidSize * 0.2; // top-4 = 16px
-        const previewBottom = 16 + previewHeight + polaroidSize * 0.2;
 
         let x, y;
         do {
             x = Math.random() * maxX;
             y = Math.random() * maxY;
         } while (
-            // Avoid center camera area
-            (x > centerLeft && x < centerRight && y > centerTop && y < centerBottom) ||
-            // Avoid top preview area
-            (x > previewLeft && x < previewRight && y > previewTop && y < previewBottom)
+            // Check if polaroid overlaps with red zone
+            (x < redZoneRight && x + polaroidSize > redZoneLeft && y < redZoneBottom && y + polaroidSize > redZoneTop) ||
+            // Check if polaroid overlaps with preview zone
+            (x < previewRight && x + polaroidSize > previewLeft && y < previewBottom && y + polaroidSize > previewTop)
         );
 
         const newPhoto: PolaroidPhoto = {
