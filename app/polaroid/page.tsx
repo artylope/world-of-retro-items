@@ -54,14 +54,6 @@ export default function Polaroid() {
         const redZoneTop = (window.innerHeight - redZoneHeight) / 2;
         const redZoneBottom = redZoneTop + redZoneHeight;
 
-        // Preview zone (top area) - 20vw × 15vh, top center
-        const previewWidth = window.innerWidth * 0.20;
-        const previewHeight = window.innerHeight * 0.15;
-        const previewLeft = (window.innerWidth - previewWidth) / 2;
-        const previewRight = previewLeft + previewWidth;
-        const previewTop = 16; // top-4 = 16px
-        const previewBottom = previewTop + previewHeight;
-
         const maxX = window.innerWidth - polaroidSize;
         const maxY = window.innerHeight - polaroidSize;
 
@@ -70,10 +62,8 @@ export default function Polaroid() {
             x = Math.random() * maxX;
             y = Math.random() * maxY;
         } while (
-            // Check if polaroid overlaps with red zone
-            (x < redZoneRight && x + polaroidSize > redZoneLeft && y < redZoneBottom && y + polaroidSize > redZoneTop) ||
-            // Check if polaroid overlaps with preview zone
-            (x < previewRight && x + polaroidSize > previewLeft && y < previewBottom && y + polaroidSize > previewTop)
+            // Check if polaroid overlaps with red zone (camera area)
+            (x < redZoneRight && x + polaroidSize > redZoneLeft && y < redZoneBottom && y + polaroidSize > redZoneTop)
         );
 
         const newPhoto: PolaroidPhoto = {
@@ -146,7 +136,7 @@ export default function Polaroid() {
         >
             {/* Hidden but functioning Webcam for photo capture */}
             {cameraActive && (
-                <div className="opacity-0 fixed top-4 left-1/2 transform -translate-x-1/2 w-[20vw] h-[15vw] max-w-32 max-h-24 rounded pointer-events-none z-50 border border-gray-300 rounded overflow-hidden">
+                <div className="fixed top-4 left-1/2 transform -translate-x-1/2 w-80 h-60 opacity-0 pointer-events-none z-0">
                     <Webcam
                         ref={webcamRef}
                         screenshotFormat="image/jpeg"
@@ -173,7 +163,7 @@ export default function Polaroid() {
                     webcamRef={webcamRef}
                 />
             </div>
-            <div className="fixed bottom-44 left-1/2 transform -translate-x-1/2 text-center font-medium text-sm md:text-base text-white px-2 -translate-y-10">
+            <div className="fixed bottom-36 left-1/2 transform -translate-x-1/2 text-center font-medium text-sm md:text-base text-white px-2 -translate-y-10">
                 Click camera or press SPACE to take photo <br /> Drag to rotate
             </div>
             {/* Scattered Polaroid Photos */}
