@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
+import Link from 'next/link';
 import Webcam from 'react-webcam';
 import PolaroidCamera3D from '../../components/PolaroidCamera3D';
 import { X } from 'lucide-react';
@@ -151,11 +152,11 @@ export default function Polaroid() {
             )}
 
             {/* Polaroid exclusion zone - red boundary */}
-            <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-5 bg-red-500 opacity-0 pointer-events-none w-[38vw] h-[50vh] rounded-lg">
+            <div className="fixed top-2/5 left-1/2 transform -translate-x-1/2 -translate-y-2/5 z-5 bg-red-500 opacity-0 pointer-events-none w-[38vw] h-[50vh] rounded-lg">
             </div>
 
             {/* 3D Polaroid Camera */}
-            <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-10">
+            <div className="fixed top-2/5 left-1/2 transform -translate-x-1/2 -translate-y-2/5 z-10">
 
                 <PolaroidCamera3D
                     onCapture={capturePhoto}
@@ -163,7 +164,7 @@ export default function Polaroid() {
                     webcamRef={webcamRef}
                 />
             </div>
-            <div className="fixed bottom-36 left-1/2 transform -translate-x-1/2 text-center font-medium text-sm md:text-base text-white px-2 -translate-y-10">
+            <div className="fixed bottom-40 left-1/2 transform -translate-x-1/2 text-center font-medium text-sm md:text-base text-white px-2 -translate-y-10">
                 Click camera or press SPACE to take photo <br /> Drag to rotate
             </div>
             {/* Scattered Polaroid Photos */}
@@ -199,6 +200,10 @@ export default function Polaroid() {
                     </div>
                 </div>
             ))}
+            <p className="fixed bottom-4 left-1/2 transform -translate-x-1/2 text-center font-medium text-sm text-sky-200 px-2 -translate-y-10">
+                Built by <a href="https://www.artylope.com/" className="font-medium text-sky-100 hover:text-white ">Yi Xin</a> using <a href="https://www.react-three-fiber.com/" className="font-medium text-sky-100 hover:text-white ">React Three Fiber</a> Thanks to <Link href="https://sketchfab.com/3d-models/polaroid-1000-sx-70-onestep-ff290b601dbe471a963f818a1646d31a" className="font-medium text-sky-100 hover:text-white ">BIGDOGLOBAL</Link> for the Polaroid 1000 model
+
+            </p>
         </div>
     );
-}
+} 
