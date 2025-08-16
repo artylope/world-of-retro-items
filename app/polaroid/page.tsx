@@ -95,7 +95,7 @@ export default function Polaroid() {
     const handleDragStart = (e: React.DragEvent, photoId: string) => {
         setDraggedPhoto(photoId);
         e.dataTransfer.effectAllowed = 'move';
-        
+
         // Create a custom drag image (optional)
         const dragImage = e.currentTarget.cloneNode(true) as HTMLElement;
         dragImage.style.transform = 'rotate(0deg)';
@@ -110,7 +110,7 @@ export default function Polaroid() {
 
     const handleDrop = (e: React.DragEvent) => {
         e.preventDefault();
-        
+
         if (!draggedPhoto) return;
 
         const rect = e.currentTarget.getBoundingClientRect();
@@ -125,8 +125,8 @@ export default function Polaroid() {
         const clampedX = Math.max(0, Math.min(x, maxX));
         const clampedY = Math.max(0, Math.min(y, maxY));
 
-        setPhotos(prev => prev.map(photo => 
-            photo.id === draggedPhoto 
+        setPhotos(prev => prev.map(photo =>
+            photo.id === draggedPhoto
                 ? { ...photo, x: clampedX, y: clampedY }
                 : photo
         ));
@@ -139,7 +139,7 @@ export default function Polaroid() {
     };
 
     return (
-        <div 
+        <div
             className="relative min-h-screen bg-sky-500 overflow-hidden"
             onDragOver={handleDragOver}
             onDrop={handleDrop}
@@ -170,6 +170,7 @@ export default function Polaroid() {
                 <PolaroidCamera3D
                     onCapture={capturePhoto}
                     isActive={cameraActive}
+                    webcamRef={webcamRef}
                 />
             </div>
             <div className="fixed bottom-44 left-1/2 transform -translate-x-1/2 text-center font-medium text-sm md:text-base text-white px-2 -translate-y-10">
@@ -182,9 +183,8 @@ export default function Polaroid() {
                     draggable
                     onDragStart={(e) => handleDragStart(e, photo.id)}
                     onDragEnd={handleDragEnd}
-                    className={`absolute transform cursor-move group transition-opacity ${
-                        draggedPhoto === photo.id ? 'opacity-50' : 'opacity-100'
-                    }`}
+                    className={`absolute transform cursor-move group transition-opacity ${draggedPhoto === photo.id ? 'opacity-50' : 'opacity-100'
+                        }`}
                     style={{
                         left: `${photo.x}px`,
                         top: `${photo.y}px`,

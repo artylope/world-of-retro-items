@@ -9,6 +9,7 @@ import * as THREE from 'three';
 interface PolaroidCamera3DProps {
   onCapture: () => void;
   isActive: boolean;
+  webcamRef?: React.RefObject<any>;
 }
 
 
@@ -24,16 +25,47 @@ function LoadingFallback() {
   );
 }
 
-function GLBPolaroidCamera({ onCapture, isActive }: { onCapture: () => void; isActive: boolean }) {
+function GLBPolaroidCamera({ onCapture, isActive, webcamRef }: { onCapture: () => void; isActive: boolean; webcamRef?: React.RefObject<any> }) {
   const groupRef = useRef<THREE.Group>(null);
   const [rotation, setRotation] = useState(0);
   const [modelCenter, setModelCenter] = useState<THREE.Vector3 | null>(null);
   const lastClickTime = useRef(0);
   const isDragging = useRef(false);
   const dragStart = useRef({ x: 0, y: 0 });
+  const [canvasTexture, setCanvasTexture] = useState<THREE.CanvasTexture | null>(null);
+  const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
   // Load the GLB model
   const { scene } = useGLTF('/assets/polaroid/polaroid_onestep.glb');
+
+  // Create canvas texture from webcam
+  useEffect(() => {
+    if (webcamRef?.current && isActive) {
+      const video = webcamRef.current.video;
+
+      if (video && video.tagName === 'VIDEO') {
+        // Create canvas
+        const canvas = document.createElement('canvas');
+        canvas.width = 320;
+        canvas.height = 240;
+        canvasRef.current = canvas;
+
+        const ctx = canvas.getContext('2d');
+
+        // Create texture from canvas
+        const texture = new THREE.CanvasTexture(canvas);
+        texture.minFilter = THREE.LinearFilter;
+        texture.magFilter = THREE.LinearFilter;
+        texture.flipY = true;
+        setCanvasTexture(texture);
+
+        console.log('Canvas texture created');
+      }
+    } else {
+      setCanvasTexture(null);
+      canvasRef.current = null;
+    }
+  }, [webcamRef, isActive]);
 
   // Calculate center and add toon shading when model loads
   useEffect(() => {
@@ -64,6 +96,21 @@ function GLBPolaroidCamera({ onCapture, isActive }: { onCapture: () => void; isA
   useFrame(() => {
     if (groupRef.current) {
       groupRef.current.rotation.y = rotation;
+    }
+
+    // Update canvas with video frame
+    if (canvasRef.current && webcamRef?.current?.video && canvasTexture) {
+      const video = webcamRef.current.video;
+      const canvas = canvasRef.current;
+      const ctx = canvas.getContext('2d');
+
+      if (ctx && video.readyState >= video.HAVE_CURRENT_DATA) {
+        ctx.save();
+        ctx.scale(1, -1);
+        ctx.drawImage(video, 0, -canvas.height, canvas.width, canvas.height);
+        ctx.restore();
+        canvasTexture.needsUpdate = true;
+      }
     }
   });
 
@@ -141,12 +188,28 @@ function GLBPolaroidCamera({ onCapture, isActive }: { onCapture: () => void; isA
       {/* This group rotates around origin, with model offset to center it */}
       <group position={[-modelCenter.x, -modelCenter.y, -modelCenter.z]}>
         <primitive object={scene} />
+
+        {/* Viewfinder screen plane positioned where the cyan square is */}
+        <mesh position={[51, 9, 36.1]} rotation={[0, 0, 0]}>
+          <planeGeometry args={[12.5, 11]} />
+          {canvasTexture ? (
+            <meshBasicMaterial
+              map={canvasTexture}
+              side={THREE.DoubleSide}
+              toneMapped={false}
+            />
+          ) : (
+            <meshBasicMaterial color="#00ff00" />
+          )}
+        </mesh>
+
+
       </group>
     </group>
   );
 }
 
-export default function PolaroidCamera3D({ onCapture, isActive }: PolaroidCamera3DProps) {
+export default function PolaroidCamera3D({ onCapture, isActive, webcamRef }: PolaroidCamera3DProps) {
   return (
     <div className="w-[min(90vw,80vh)] h-[min(90vw,80vh)]"> {/* Responsive: 90% of viewport width or 80% of height, whichever is smaller */}
       <Canvas className='w-full h-full'>
@@ -170,7 +233,7 @@ export default function PolaroidCamera3D({ onCapture, isActive }: PolaroidCamera
 
 
         <Suspense fallback={<LoadingFallback />}>
-          <GLBPolaroidCamera onCapture={onCapture} isActive={isActive} />
+          <GLBPolaroidCamera onCapture={onCapture} isActive={isActive} webcamRef={webcamRef} />
         </Suspense>
       </Canvas>
 
