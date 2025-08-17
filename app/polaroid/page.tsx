@@ -3,8 +3,12 @@
 import { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
 import Webcam from 'react-webcam';
+import Lottie from 'lottie-react';
 import PolaroidCamera3D from '../../components/PolaroidCamera3D';
 import { X } from 'lucide-react';
+import spaceAnimation from '../../public/assets/polaroid/animations/space.json';
+import mouseAnimation from '../../public/assets/polaroid/animations/mouse.json';
+import rotateAnimation from '../../public/assets/polaroid/animations/rotate.json';
 
 interface PolaroidPhoto {
     id: string;
@@ -22,6 +26,22 @@ export default function Polaroid() {
     const [currentInstruction, setCurrentInstruction] = useState(0);
     const [instructionOpacity, setInstructionOpacity] = useState(1);
 
+    // Instruction data mapping
+    const instructions = [
+        {
+            text: "Click the camera to take photos",
+            animation: mouseAnimation
+        },
+        {
+            text: "Press SPACE to take photos",
+            animation: spaceAnimation
+        },
+        {
+            text: "Drag to rotate the camera",
+            animation: rotateAnimation // placeholder until third animation is added
+        }
+    ];
+
     // Auto-start camera on component mount
     useEffect(() => {
         setCameraActive(true);
@@ -29,12 +49,6 @@ export default function Polaroid() {
 
     // Cycling instructions effect
     useEffect(() => {
-        const instructions = [
-            "Click camera to take photo",
-            "Press SPACE to take photo",
-            "Drag to rotate camera"
-        ];
-
         const cycleInstructions = () => {
             // Fade out
             setInstructionOpacity(0);
@@ -47,10 +61,10 @@ export default function Polaroid() {
             }, 300); // Half second fade out
         };
 
-        const interval = setInterval(cycleInstructions, 3000); // 3 seconds per instruction
+        const interval = setInterval(cycleInstructions, 8000); // 8 seconds per instruction
 
         return () => clearInterval(interval);
-    }, []);
+    }, [instructions.length]);
 
     // Handle spacebar to take photos
     useEffect(() => {
@@ -194,17 +208,22 @@ export default function Polaroid() {
                 />
             </div>
             <div
-                className="fixed top-44 left-1/2 transform -translate-x-1/2 text-center font-medium text-sm md:text-base text-white px-2 transition-opacity duration-500"
+                className="fixed top-40 left-1/2 transform -translate-x-1/2 text-center font-medium text-sm md:text-base text-white px-2 transition-opacity duration-500"
                 style={{ opacity: instructionOpacity }}
             >
-                {(() => {
-                    const instructions = [
-                        "Click camera to take photo",
-                        "Press SPACE to take photo",
-                        "Drag to rotate camera"
-                    ];
-                    return instructions[currentInstruction];
-                })()}
+                <div className="flex flex-col items-center space-y-3">
+                    <div className="w-16 h-8">
+                        <Lottie
+                            animationData={instructions[currentInstruction].animation}
+                            loop={true}
+                            autoplay={true}
+                            style={{ width: '100%', height: '100%' }}
+                        />
+                    </div>
+                    <div className="text-white font-medium text-base md:text-lg">
+                        {instructions[currentInstruction].text}
+                    </div>
+                </div>
             </div>
             {/* Scattered Polaroid Photos */}
             {photos.map((photo) => (
@@ -242,7 +261,7 @@ export default function Polaroid() {
 
             <p className="fixed bottom-4 left-1/2 transform -translate-x-1/2 text-center text-sm text-sky-200 px-2 -translate-y-10">
                 Built by <a href="https://www.artylope.com/" className="font-semibold text-sky-50 hover:text-white ">Yi Xin</a> using <a href="https://www.react-three-fiber.com/" className="font-semibold text-sky-50 hover:text-white ">React Three Fiber</a>. <br />Thanks to <Link href="https://sketchfab.com/3d-models/polaroid-1000-sx-70-onestep-ff290b601dbe471a963f818a1646d31a" className="font-semibold text-sky-50 hover:text-white ">BIGDOGLOBAL</Link> for the Polaroid 1000 model
-                <br /> This is a pure frontend project, no photos are stored or sent to any server.
+                <br />  <br />This is a pure frontend project, no photos are stored or sent to any server.
 
             </p>
         </div >
