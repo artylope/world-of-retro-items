@@ -162,6 +162,8 @@ export default function Polaroid() {
             onDragOver={handleDragOver}
             onDrop={handleDrop}
         >
+            <div className="fixed top-0 left-0 w-full h-full z-50 overflow-hidden dreamy-blur"></div>
+
             {/* Hidden but functioning Webcam for photo capture */}
             {cameraActive && (
                 <div className="fixed top-4 left-1/2 transform -translate-x-1/2 w-80 h-60 opacity-0 pointer-events-none z-0">

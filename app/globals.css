@@ -116,7 +116,18 @@
   * {
     @apply border-border outline-ring/50;
   }
+
   body {
     @apply bg-background text-foreground;
+  }
+
+  .dreamy-blur:before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    background: rgba(255, 200, 150, 0.2);
+    /* sepia tint */
+    mix-blend-mode: multiply;
+    pointer-events: none;
   }
 }

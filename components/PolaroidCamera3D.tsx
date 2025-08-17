@@ -17,12 +17,7 @@ interface PolaroidCamera3DProps {
 useGLTF.preload('/assets/polaroid/polaroid_onestep.glb');
 
 function LoadingFallback() {
-  return (
-    <mesh>
-      <boxGeometry args={[2, 1.5, 1]} />
-      <meshToonMaterial color="#cccccc" />
-    </mesh>
-  );
+  return null; // Don't show anything while loading
 }
 
 function GLBPolaroidCamera({ onCapture, isActive, webcamRef }: { onCapture: () => void; isActive: boolean; webcamRef?: React.RefObject<any> }) {
