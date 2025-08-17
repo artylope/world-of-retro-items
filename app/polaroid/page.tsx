@@ -19,10 +19,37 @@ export default function Polaroid() {
     const webcamRef = useRef<Webcam>(null);
     const [cameraActive, setCameraActive] = useState(false);
     const [draggedPhoto, setDraggedPhoto] = useState<string | null>(null);
+    const [currentInstruction, setCurrentInstruction] = useState(0);
+    const [instructionOpacity, setInstructionOpacity] = useState(1);
 
     // Auto-start camera on component mount
     useEffect(() => {
         setCameraActive(true);
+    }, []);
+
+    // Cycling instructions effect
+    useEffect(() => {
+        const instructions = [
+            "Click camera to take photo",
+            "Press SPACE to take photo",
+            "Drag to rotate camera"
+        ];
+
+        const cycleInstructions = () => {
+            // Fade out
+            setInstructionOpacity(0);
+
+            setTimeout(() => {
+                // Change instruction
+                setCurrentInstruction((prev) => (prev + 1) % instructions.length);
+                // Fade in
+                setInstructionOpacity(1);
+            }, 300); // Half second fade out
+        };
+
+        const interval = setInterval(cycleInstructions, 3000); // 3 seconds per instruction
+
+        return () => clearInterval(interval);
     }, []);
 
     // Handle spacebar to take photos
@@ -164,8 +191,18 @@ export default function Polaroid() {
                     webcamRef={webcamRef}
                 />
             </div>
-            <div className="fixed bottom-40 left-1/2 transform -translate-x-1/2 text-center font-medium text-sm md:text-base text-white px-2 -translate-y-10">
-                Click camera or press SPACE to take photo <br /> Drag to rotate
+            <div
+                className="fixed top-44 left-1/2 transform -translate-x-1/2 text-center font-medium text-sm md:text-base text-white px-2 transition-opacity duration-500"
+                style={{ opacity: instructionOpacity }}
+            >
+                {(() => {
+                    const instructions = [
+                        "Click camera to take photo",
+                        "Press SPACE to take photo",
+                        "Drag to rotate camera"
+                    ];
+                    return instructions[currentInstruction];
+                })()}
             </div>
             {/* Scattered Polaroid Photos */}
             {photos.map((photo) => (
@@ -200,8 +237,8 @@ export default function Polaroid() {
                     </div>
                 </div>
             ))}
-            <p className="fixed bottom-4 left-1/2 transform -translate-x-1/2 text-center font-medium text-sm text-sky-200 px-2 -translate-y-10">
-                Built by <a href="https://www.artylope.com/" className="font-medium text-sky-100 hover:text-white ">Yi Xin</a> using <a href="https://www.react-three-fiber.com/" className="font-medium text-sky-100 hover:text-white ">React Three Fiber</a> Thanks to <Link href="https://sketchfab.com/3d-models/polaroid-1000-sx-70-onestep-ff290b601dbe471a963f818a1646d31a" className="font-medium text-sky-100 hover:text-white ">BIGDOGLOBAL</Link> for the Polaroid 1000 model
+            <p className="fixed bottom-4 left-1/2 transform -translate-x-1/2 text-center text-sm text-sky-200 px-2 -translate-y-10">
+                Built by <a href="https://www.artylope.com/" className="font-semibold text-sky-50 hover:text-white ">Yi Xin</a> using <a href="https://www.react-three-fiber.com/" className="font-semibold text-sky-50 hover:text-white ">React Three Fiber</a>. Thanks to <Link href="https://sketchfab.com/3d-models/polaroid-1000-sx-70-onestep-ff290b601dbe471a963f818a1646d31a" className="font-semibold text-sky-50 hover:text-white ">BIGDOGLOBAL</Link> for the Polaroid 1000 model
 
             </p>
         </div>
