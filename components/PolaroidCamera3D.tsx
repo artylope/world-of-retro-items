@@ -29,6 +29,18 @@ function GLBPolaroidCamera({ onCapture, isActive, webcamRef }: { onCapture: () =
   const dragStart = useRef({ x: 0, y: 0 });
   const [canvasTexture, setCanvasTexture] = useState<THREE.CanvasTexture | null>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const [isMobile, setIsMobile] = useState(false);
+
+  // Check if device is mobile
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768); // md breakpoint
+    };
+
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   // Load the GLB model
   const { scene } = useGLTF('/assets/polaroid/polaroid_onestep.glb');
@@ -178,7 +190,7 @@ function GLBPolaroidCamera({ onCapture, isActive, webcamRef }: { onCapture: () =
       onPointerDown={handlePointerDown}
       onPointerMove={handlePointerMove}
       onClick={handleClick}
-      scale={[0.25, 0.25, 0.25]} // Bigger scale for larger canvas
+      scale={isMobile ? [0.15, 0.15, 0.15] : [0.25, 0.25, 0.25]} // Smaller scale on mobile (60% of desktop size)
     >
       {/* This group rotates around origin, with model offset to center it */}
       <group position={[-modelCenter.x, -modelCenter.y, -modelCenter.z]}>

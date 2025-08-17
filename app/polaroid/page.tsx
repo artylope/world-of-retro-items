@@ -241,18 +241,18 @@ export default function Polaroid() {
                         zIndex: draggedPhoto === photo.id ? 1000 : 'auto'
                     }}
                 >
-                    <div className="bg-white p-3 pb-8 shadow-xl rounded-xs hover:shadow-xl transition-shadow">
+                    <div className="bg-white p-3 pb-8 md:p-3 md:pb-8 shadow-xl rounded-xs hover:shadow-xl transition-shadow">
                         <div className="relative">
                             <img
                                 src={photo.imageUrl}
                                 alt="Polaroid"
-                                className="w-[min(12vw,200px)] h-[min(10vw,180px)] object-cover rounded-xs"
+                                className="w-[min(24vw,400px)] h-[min(24vw,400px)] md:w-[min(12vw,200px)] md:h-[min(12vw,200px)] object-cover rounded-xs"
                             />
                             <button
                                 onClick={() => removePhoto(photo.id)}
-                                className="absolute -top-6 -right-6 bg-zinc-200 text-white rounded-full w-6 h-6 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity text-xs"
+                                className="absolute -top-6 -right-6 md:-top-6 md:-right-6 bg-zinc-200 text-white rounded-full w-15 h-15 md:w-6 md:h-6 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity text-xs"
                             >
-                                <X className="w-4 h-4 text-zinc-600 hover:text-zinc-500" strokeWidth={2} />
+                                <X className="w-6 h-6 md:w-4 md:h-4 text-zinc-600 hover:text-zinc-500" strokeWidth={2} />
                             </button>
                         </div>
                     </div>
