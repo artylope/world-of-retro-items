@@ -5,6 +5,14 @@ import Link from 'next/link';
 import Webcam from 'react-webcam';
 import Lottie from 'lottie-react';
 import PolaroidCamera3D from '../../components/PolaroidCamera3D';
+import {
+    Breadcrumb,
+    BreadcrumbList,
+    BreadcrumbItem,
+    BreadcrumbLink,
+    BreadcrumbPage,
+    BreadcrumbSeparator
+} from '../../components/ui/breadcrumb';
 import { X } from 'lucide-react';
 import spaceAnimation from '../../public/assets/polaroid/animations/space.json';
 import mouseAnimation from '../../public/assets/polaroid/animations/mouse.json';
@@ -178,6 +186,28 @@ export default function Polaroid() {
             onDragOver={handleDragOver}
             onDrop={handleDrop}
         >
+            {/* Breadcrumb Navigation */}
+            <div className="fixed top-4 left-4 z-50">
+                <Breadcrumb>
+                    <BreadcrumbList className="text-white">
+                        <BreadcrumbItem>
+                            <BreadcrumbLink
+                                href="/"
+                                className="text-white hover:text-sky-200 transition-colors"
+                            >
+                                World of Retro Items
+                            </BreadcrumbLink>
+                        </BreadcrumbItem>
+                        <BreadcrumbSeparator className="text-white" />
+                        <BreadcrumbItem>
+                            <BreadcrumbPage className="text-sky-200">
+                                The Polaroid
+                            </BreadcrumbPage>
+                        </BreadcrumbItem>
+                    </BreadcrumbList>
+                </Breadcrumb>
+            </div>
+
             <div className="fixed top-0 left-0 w-full h-full z-30 overflow-hidden dreamy-blur pointer-events-none "></div>
 
             {/* Hidden but functioning Webcam for photo capture */}
