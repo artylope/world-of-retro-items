@@ -158,7 +158,7 @@ export default function Polaroid() {
 
     return (
         <div
-            className="relative min-h-screen bg-sky-500 overflow-hidden"
+            className="relative min-h-screen bg-sky-500 overflow-hidden space-grotesk"
             onDragOver={handleDragOver}
             onDrop={handleDrop}
         >
