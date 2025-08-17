@@ -253,9 +253,9 @@ export default function Polaroid() {
                                 />
                                 <button
                                     onClick={() => removePhoto(photo.id)}
-                                    className="absolute -top-6 -right-6 md:-top-6 md:-right-6 bg-zinc-200 text-white rounded-full w-15 h-15 md:w-6 md:h-6 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity text-xs"
+                                    className="absolute -top-3 -right-3 md:-top-5 md:-right-5 bg-zinc-200 text-white rounded-full w-5 h-5 md:w-6 md:h-6 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity text-xs z-20"
                                 >
-                                    <X className="w-6 h-6 md:w-4 md:h-4 text-zinc-600 hover:text-zinc-500" strokeWidth={2} />
+                                    <X className="w-4 h-4 text-zinc-600 hover:text-zinc-500" strokeWidth={2} />
                                 </button>
                             </div>
                         </div>
@@ -265,7 +265,7 @@ export default function Polaroid() {
             <div className="fixed bottom-0 w-full flex flex-col items-center justify-center px-4 py-4">
                 <p className="w-full text-sm text-sky-200 text-center text-balance">
                     Built by <a href="https://www.artylope.com/" className="font-semibold text-sky-50 hover:text-white ">Yi Xin</a> using <a href="https://www.react-three-fiber.com/" className="font-semibold text-sky-50 hover:text-white ">React Three Fiber</a>. <br />Thanks to <Link href="https://sketchfab.com/3d-models/polaroid-1000-sx-70-onestep-ff290b601dbe471a963f818a1646d31a" className="font-semibold text-sky-50 hover:text-white ">BIGDOGLOBAL</Link> for the Polaroid 1000 model
-                    <br />  <br />This is a pure frontend project, no photos are stored or sent to any server.
+                    <br />  <br />Photos stay on this device, no photos are stored or sent to any server.
 
                 </p>
             </div >
