@@ -202,31 +202,31 @@ export default function Polaroid() {
 
             {/* 3D Polaroid Camera */}
             <div className="fixed top-2/5 left-1/2 transform -translate-x-1/2 -translate-y-2/5 z-10">
-
+                <div
+                    className="absolute -top-12 sm:-top-8 md:-top-4 left-1/2 transform -translate-x-1/2 text-center font-medium text-sm md:text-base text-white px-2 transition-opacity duration-500"
+                    style={{ opacity: instructionOpacity }}
+                >
+                    <div className="flex flex-col items-center space-y-3">
+                        <div className="w-16 h-8">
+                            <Lottie
+                                animationData={instructions[currentInstruction].animation}
+                                loop={true}
+                                autoplay={true}
+                                style={{ width: '100%', height: '100%', opacity: 0.8 }}
+                            />
+                        </div>
+                        <div className="w-full  text-nowrap text-white font-medium text-base  leading-tight">
+                            {instructions[currentInstruction].text}
+                        </div>
+                    </div>
+                </div>
                 <PolaroidCamera3D
                     onCapture={capturePhoto}
                     isActive={cameraActive}
                     webcamRef={webcamRef}
                 />
             </div>
-            <div
-                className="fixed top-36 md:top-32 left-1/2 transform -translate-x-1/2 text-center font-medium text-sm md:text-base text-white px-2 transition-opacity duration-500"
-                style={{ opacity: instructionOpacity }}
-            >
-                <div className="flex flex-col items-center space-y-3">
-                    <div className="w-16 h-8">
-                        <Lottie
-                            animationData={instructions[currentInstruction].animation}
-                            loop={true}
-                            autoplay={true}
-                            style={{ width: '100%', height: '100%', opacity: 0.8 }}
-                        />
-                    </div>
-                    <div className="text-white font-medium text-base md:text-lg">
-                        {instructions[currentInstruction].text}
-                    </div>
-                </div>
-            </div>
+
             {/* Scattered Polaroid Photos */}
             {photos.map((photo) => (
 
@@ -244,7 +244,7 @@ export default function Polaroid() {
                         zIndex: draggedPhoto === photo.id ? 1000 : 50
                     }}
                 >  <div className="w-fit h-fit">
-                        <div className="bg-white p-2 pb-6 md:p-3 md:pb-8 shadow-xl rounded-xs hover:shadow-xl transition-shadow">
+                        <div className="bg-white p-1 pb-4 md:p-2 md:pb-6 shadow-xl rounded-xs hover:shadow-xl transition-shadow">
                             <div className="relative">
                                 <img
                                     src={photo.imageUrl}
@@ -262,12 +262,13 @@ export default function Polaroid() {
                     </div>
                 </div>
             ))}
+            <div className="fixed bottom-0 w-full flex flex-col items-center justify-center px-4 py-4">
+                <p className="w-full text-sm text-sky-200 text-center text-balance">
+                    Built by <a href="https://www.artylope.com/" className="font-semibold text-sky-50 hover:text-white ">Yi Xin</a> using <a href="https://www.react-three-fiber.com/" className="font-semibold text-sky-50 hover:text-white ">React Three Fiber</a>. <br />Thanks to <Link href="https://sketchfab.com/3d-models/polaroid-1000-sx-70-onestep-ff290b601dbe471a963f818a1646d31a" className="font-semibold text-sky-50 hover:text-white ">BIGDOGLOBAL</Link> for the Polaroid 1000 model
+                    <br />  <br />This is a pure frontend project, no photos are stored or sent to any server.
 
-            <p className="fixed bottom-4 left-1/2 transform -translate-x-1/2 text-center text-sm text-sky-200 px-2 -translate-y-10">
-                Built by <a href="https://www.artylope.com/" className="font-semibold text-sky-50 hover:text-white ">Yi Xin</a> using <a href="https://www.react-three-fiber.com/" className="font-semibold text-sky-50 hover:text-white ">React Three Fiber</a>. <br />Thanks to <Link href="https://sketchfab.com/3d-models/polaroid-1000-sx-70-onestep-ff290b601dbe471a963f818a1646d31a" className="font-semibold text-sky-50 hover:text-white ">BIGDOGLOBAL</Link> for the Polaroid 1000 model
-                <br />  <br />This is a pure frontend project, no photos are stored or sent to any server.
-
-            </p>
-        </div >
+                </p>
+            </div >
+        </div>
     );
 } 

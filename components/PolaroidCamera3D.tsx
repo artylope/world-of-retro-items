@@ -197,7 +197,7 @@ function GLBPolaroidCamera({ onCapture, isActive, webcamRef }: { onCapture: () =
         <primitive object={scene} />
 
         {/* Viewfinder screen plane positioned where the cyan square is */}
-        <mesh position={[51, 9, 36.1]} rotation={[0, 0, 0]}>
+        <mesh position={[51.1, 9, 36.1]} rotation={[0, 0, 0]}>
           <planeGeometry args={[12.5, 11]} />
           {canvasTexture ? (
             <meshBasicMaterial
