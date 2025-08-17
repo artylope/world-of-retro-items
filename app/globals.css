@@ -127,7 +127,7 @@
     content: "";
     position: fixed;
     inset: 0;
-    background: rgba(255, 200, 150, 0);
+    background: rgba(255, 200, 150, 0.1);
     /* sepia tint */
     mix-blend-mode: multiply;
     pointer-events: none;

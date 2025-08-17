@@ -158,11 +158,11 @@ export default function Polaroid() {
 
     return (
         <div
-            className="relative min-h-screen bg-sky-500 overflow-hidden space-grotesk"
+            className="relative min-h-screen bg-sky-600 overflow-hidden space-grotesk"
             onDragOver={handleDragOver}
             onDrop={handleDrop}
         >
-            <div className="fixed top-0 left-0 w-full h-full z-50 overflow-hidden dreamy-blur"></div>
+            <div className="fixed top-0 left-0 w-full h-full z-30 overflow-hidden dreamy-blur pointer-events-none "></div>
 
             {/* Hidden but functioning Webcam for photo capture */}
             {cameraActive && (
@@ -213,7 +213,7 @@ export default function Polaroid() {
                     draggable
                     onDragStart={(e) => handleDragStart(e, photo.id)}
                     onDragEnd={handleDragEnd}
-                    className={`absolute transform cursor-move group transition-opacity ${draggedPhoto === photo.id ? 'opacity-50' : 'opacity-100'
+                    className={`z-40 absolute transform cursor-move group transition-opacity ${draggedPhoto === photo.id ? 'opacity-50' : 'opacity-100'
                         }`}
                     style={{
                         left: `${photo.x}px`,
