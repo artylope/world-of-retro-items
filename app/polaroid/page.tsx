@@ -85,8 +85,9 @@ export default function Polaroid() {
         const imageUrl = webcamRef.current.getScreenshot();
         if (!imageUrl) return;
 
-        // Exclusion zones
-        const polaroidSize = Math.min(window.innerWidth * 0.12, 200);
+        // Exclusion zones - use actual polaroid size based on screen size
+        const isMobile = window.innerWidth < 768;
+        const polaroidSize = isMobile ? 150 : Math.min(window.innerWidth * 0.12, 200);
 
         // Red zone (center camera area) - 38vw × 50vh, centered
         const redZoneWidth = window.innerWidth * 0.38;
@@ -149,8 +150,9 @@ export default function Polaroid() {
         const x = e.clientX - rect.left - 75; // Offset for center of photo
         const y = e.clientY - rect.top - 75;
 
-        // Ensure photo stays within bounds
-        const polaroidSize = Math.min(window.innerWidth * 0.12, 200);
+        // Ensure photo stays within bounds - use actual polaroid size based on screen size
+        const isMobile = window.innerWidth < 768;
+        const polaroidSize = isMobile ? 150 : Math.min(window.innerWidth * 0.12, 200);
         const maxX = window.innerWidth - polaroidSize;
         const maxY = window.innerHeight - polaroidSize;
 
@@ -208,7 +210,7 @@ export default function Polaroid() {
                 />
             </div>
             <div
-                className="fixed top-40 left-1/2 transform -translate-x-1/2 text-center font-medium text-sm md:text-base text-white px-2 transition-opacity duration-500"
+                className="fixed top-36 md:top-32 left-1/2 transform -translate-x-1/2 text-center font-medium text-sm md:text-base text-white px-2 transition-opacity duration-500"
                 style={{ opacity: instructionOpacity }}
             >
                 <div className="flex flex-col items-center space-y-3">
@@ -227,33 +229,35 @@ export default function Polaroid() {
             </div>
             {/* Scattered Polaroid Photos */}
             {photos.map((photo) => (
+
                 <div
                     key={photo.id}
                     draggable
                     onDragStart={(e) => handleDragStart(e, photo.id)}
                     onDragEnd={handleDragEnd}
-                    className={`z-40 absolute transform cursor-move group transition-opacity ${draggedPhoto === photo.id ? 'opacity-50' : 'opacity-100'
+                    className={`z-50 absolute transform cursor-move group transition-opacity ${draggedPhoto === photo.id ? 'opacity-50' : 'opacity-100'
                         }`}
                     style={{
                         left: `${photo.x}px`,
                         top: `${photo.y}px`,
                         transform: `rotate(${photo.rotation}deg)`,
-                        zIndex: draggedPhoto === photo.id ? 1000 : 'auto'
+                        zIndex: draggedPhoto === photo.id ? 1000 : 50
                     }}
-                >
-                    <div className="bg-white p-3 pb-8 md:p-3 md:pb-8 shadow-xl rounded-xs hover:shadow-xl transition-shadow">
-                        <div className="relative">
-                            <img
-                                src={photo.imageUrl}
-                                alt="Polaroid"
-                                className="w-[min(24vw,400px)] h-[min(24vw,400px)] md:w-[min(12vw,200px)] md:h-[min(12vw,200px)] object-cover rounded-xs"
-                            />
-                            <button
-                                onClick={() => removePhoto(photo.id)}
-                                className="absolute -top-6 -right-6 md:-top-6 md:-right-6 bg-zinc-200 text-white rounded-full w-15 h-15 md:w-6 md:h-6 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity text-xs"
-                            >
-                                <X className="w-6 h-6 md:w-4 md:h-4 text-zinc-600 hover:text-zinc-500" strokeWidth={2} />
-                            </button>
+                >  <div className="w-fit h-fit">
+                        <div className="bg-white p-2 pb-6 md:p-3 md:pb-8 shadow-xl rounded-xs hover:shadow-xl transition-shadow">
+                            <div className="relative">
+                                <img
+                                    src={photo.imageUrl}
+                                    alt="Polaroid"
+                                    className="w-[150px] h-[112.5px] md:w-[min(12vw,200px)] md:h-[min(9vw,150px)] object-cover rounded-xs relative z-10"
+                                />
+                                <button
+                                    onClick={() => removePhoto(photo.id)}
+                                    className="absolute -top-6 -right-6 md:-top-6 md:-right-6 bg-zinc-200 text-white rounded-full w-15 h-15 md:w-6 md:h-6 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity text-xs"
+                                >
+                                    <X className="w-6 h-6 md:w-4 md:h-4 text-zinc-600 hover:text-zinc-500" strokeWidth={2} />
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
