@@ -240,7 +240,7 @@ export default function Polaroid() {
                 </div>
             ))}
             <p className="fixed bottom-4 left-1/2 transform -translate-x-1/2 text-center text-sm text-sky-200 px-2 -translate-y-10">
-                Built by <a href="https://www.artylope.com/" className="font-semibold text-sky-50 hover:text-white ">Yi Xin</a> using <a href="https://www.react-three-fiber.com/" className="font-semibold text-sky-50 hover:text-white ">React Three Fiber</a>. Thanks to <Link href="https://sketchfab.com/3d-models/polaroid-1000-sx-70-onestep-ff290b601dbe471a963f818a1646d31a" className="font-semibold text-sky-50 hover:text-white ">BIGDOGLOBAL</Link> for the Polaroid 1000 model
+                Built by <a href="https://www.artylope.com/" className="font-semibold text-sky-50 hover:text-white ">Yi Xin</a> using <a href="https://www.react-three-fiber.com/" className="font-semibold text-sky-50 hover:text-white ">React Three Fiber</a>. <br />Thanks to <Link href="https://sketchfab.com/3d-models/polaroid-1000-sx-70-onestep-ff290b601dbe471a963f818a1646d31a" className="font-semibold text-sky-50 hover:text-white ">BIGDOGLOBAL</Link> for the Polaroid 1000 model
 
             </p>
         </div>
